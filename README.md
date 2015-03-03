@@ -57,6 +57,10 @@ maps included if `true`) By default source maps are included only if the
 environment is set to development. (visit the main Rump repository for more
 information on environment)
 
+#### `options.scripts.browserify`
+This specifies any options you want to override/set up when intializing a
+Browserify bundle.
+
 #### `options.scripts.transforms` (`[]`)
 This specifies a list of transforms that will be applied to Browserify bundles.
 
@@ -79,10 +83,10 @@ minifying. The default options set are:
 }
 ```
 
-### `rump.configs.uglifyjs`
-This contains the generated options that are passed to UglifyJS, in the Gulp
-task. This is a good way to see what options are generated based on defaults
-and overrides.
+### `rump.configs.browserify`, `rump.configs.uglifyjs`
+This contains the generated options that are passed to Browserify and UglifyJS,
+respectively, in the Gulp task. This is a good way to see what options are
+generated based on defaults and overrides.
 
 
 ## Plugins/Transforms
