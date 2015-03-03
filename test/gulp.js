@@ -18,7 +18,7 @@ var sleep = require('timeout-then');
 var rump = require('../lib');
 var protocol = process.platform === 'win32' ? 'file:///' : 'file://';
 
-describe('rump styles tasks', function() {
+describe('rump scriptsify tasks', function() {
   beforeEach(function() {
     rump.configure({
       environment: 'development',
