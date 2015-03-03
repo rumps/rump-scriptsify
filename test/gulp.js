@@ -36,6 +36,7 @@ describe('rump scriptsify tasks', function() {
   });
 
   it('are added and defined', function() {
+    this.timeout(10000);
     var callback = sinon.spy();
     rump.on('gulp:main', callback);
     rump.on('gulp:scripts', callback);
