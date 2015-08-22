@@ -5,7 +5,7 @@ import gulp from 'gulp'
 import timeout from 'timeout-then'
 import rump from 'rump'
 import {colors} from 'gulp-util'
-import {readFile, writeFile} from 'mz/fs'
+import {exists, readFile, writeFile} from 'mz/fs'
 import {resolve, sep} from 'path'
 import {spy} from 'sinon'
 
@@ -71,6 +71,15 @@ describe('tasks', function() {
     function newLog(...args) {
       logs.push(stripColor(args.join(' ')))
     }
+  })
+
+  it('for building', async() => {
+    await new Promise(resolve => {
+      gulp.task('postbuild', ['spec:build'], resolve)
+      gulp.start('postbuild')
+    })
+    const fileExists = await exists('tmp/index.js')
+    fileExists.should.be.true()
   })
 
   describe('for watching', () => {
