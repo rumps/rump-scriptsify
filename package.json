@@ -10,6 +10,13 @@
     "type": "git",
     "url": "https://github.com/rumps/scriptsify"
   },
+  "keywords": [
+    "browserify",
+    "gulp",
+    "javascript",
+    "rump",
+    "rump-module"
+  ],
   "scripts": {
     "codecov": "npm run coverage",
     "postcodecov": "codecov < coverage/coverage.json",
