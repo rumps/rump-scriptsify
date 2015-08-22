@@ -1,130 +1,123 @@
-'use strict';
+import '../src'
+import bufferEqual from 'buffer-equal'
+import convert from 'convert-source-map'
+import gulp from 'gulp'
+import timeout from 'timeout-then'
+import rump from 'rump'
+import {colors} from 'gulp-util'
+import {readFile, writeFile} from 'mz/fs'
+import {resolve, sep} from 'path'
+import {spy} from 'sinon'
 
-// Temporary fix until old LoDash is updated in some Gulp dependency
-Object.getPrototypeOf.toString = function() {
-  return 'function getPrototypeOf() { [native code] }';
-};
+const protocol = process.platform === 'win32' ? 'file:///' : 'file://',
+      {stripColor} = colors
 
-var assert = require('assert');
-var bufferEqual = require('buffer-equal');
-var co = require('co');
-var convert = require('convert-source-map');
-var fs = require('mz/fs');
-var gulp = require('gulp');
-var util = require('gulp-util');
-var path = require('path');
-var sinon = require('sinon');
-var sleep = require('timeout-then');
-var rump = require('../lib');
-var protocol = process.platform === 'win32' ? 'file:///' : 'file://';
+describe('tasks', function() {
+  this.timeout(0)
 
-describe('rump scriptsify tasks', function() {
-  beforeEach(function() {
+  afterEach(() => {
     rump.configure({
       environment: 'development',
       paths: {
-        source: {
-          root: 'test/src/js',
-          scripts: ''
-        },
-        destination: {
-          root: 'tmp',
-          scripts: ''
-        }
-      }
-    });
-  });
+        source: {root: 'test/fixtures', scripts: ''},
+        destination: {root: 'tmp', scripts: ''},
+      },
+    })
+  })
 
-  it('are added and defined', function() {
-    this.timeout(10000);
-    var callback = sinon.spy();
-    rump.on('gulp:main', callback);
-    rump.on('gulp:scripts', callback);
-    rump.addGulpTasks({prefix: 'spec'});
-    // TODO Remove no callback check on next major core update
-    assert(!callback.called || callback.calledTwice);
-    assert(gulp.tasks['spec:info:scripts']);
-    assert(gulp.tasks['spec:build:scripts']);
-  });
+  it('are added and defined', () => {
+    const callback = spy()
+    rump.on('gulp:main', callback)
+    rump.on('gulp:scripts', callback)
+    rump.addGulpTasks({prefix: 'spec'})
+    callback.should.be.calledTwice()
+    gulp.tasks['spec:info:scripts'].should.be.ok()
+    gulp.tasks['spec:build:scripts'].should.be.ok()
+  })
 
-  it('displays correct information in info task', function() {
-    var oldLog = console.log;
-    var logs = [];
-    console.log = function() {
-      logs.push(util.colors.stripColor(Array.from(arguments).join(' ')));
-    };
-    gulp.start('spec:info');
-    console.log = oldLog;
-    assert(logs.some(hasPaths));
-    assert(logs.some(hasJsFile));
-    assert(!logs.some(hasLibFile));
-  });
+  it('displays correct information in info task', () => {
+    const logs = [],
+          {log} = console
+    console.log = newLog
+    gulp.start('spec:info')
+    console.log = log
+    logs.slice(-6).should.eql([
+      '',
+      '--- Scripts v0.7.0',
+      `Processed scripts from test${sep}fixtures are copied with source maps to tmp`,
+      'Affected files:',
+      'index.js',
+      '',
+    ])
+    logs.length = 0
+    console.log = newLog
+    gulp.start('spec:info:prod')
+    console.log = log
+    logs.slice(-6).should.eql([
+      '',
+      '--- Scripts v0.7.0',
+      `Processed scripts from test${sep}fixtures are minified and copied to tmp`,
+      'Affected files:',
+      'index.js',
+      '',
+    ])
+    rump.reconfigure({paths: {source: {scripts: 'nonexistant'}}})
+    logs.length = 0
+    console.log = newLog
+    gulp.start('spec:info')
+    console.log = log
+    logs.length.should.not.be.above(4)
 
-  describe('for building', function() {
-    var originals;
+    function newLog(...args) {
+      logs.push(stripColor(args.join(' ')))
+    }
+  })
 
-    before(co.wrap(function*() {
-      originals = yield [
-        fs.readFile('test/src/js/index.js'),
-        fs.readFile('test/src/js/lib/index.js')
-      ];
-    }));
+  describe('for watching', () => {
+    let originals
 
-    before(function(done) {
-      gulp.task('postbuild', ['spec:watch'], function() {
-        done();
-      });
-      gulp.start('postbuild');
-    });
+    before(async() => {
+      originals = await Promise.all([
+        readFile('test/fixtures/index.js'),
+        readFile('test/fixtures/lib/index.js'),
+      ])
+      await new Promise(resolve => {
+        gulp.task('postwatch', ['spec:watch'], resolve)
+        gulp.start('postwatch')
+      })
+    })
 
-    afterEach(co.wrap(function*() {
-      yield sleep(800);
-      yield [
-        fs.writeFile('test/src/js/index.js', originals[0]),
-        fs.writeFile('test/src/js/lib/index.js', originals[1])
-      ];
-      yield sleep(800);
-    }));
+    beforeEach(() => timeout(1000))
 
-    it('handles updates', co.wrap(function*() {
-      this.timeout(5000);
-      var firstContent = yield fs.readFile('tmp/index.js');
-      yield sleep(2000);
-      fs.writeFileSync('test/src/js/lib/index.js', 'module.exports = "";');
-      yield sleep(2000);
-      var secondContent = yield fs.readFile('tmp/index.js');
-      assert(!bufferEqual(firstContent, secondContent));
-    }));
+    afterEach(() => Promise.all([
+      writeFile('test/fixtures/index.js', originals[0]),
+      writeFile('test/fixtures/lib/index.js', originals[1]),
+    ]))
 
-    it('handles source maps in development', co.wrap(function*() {
-      var content = yield fs.readFile('tmp/index.js');
-      var sourceMap = convert.fromSource(content.toString());
-      var exists = yield sourceMap
-            .getProperty('sources')
-            .slice(1)
-            .filter(identity)
-            .map(checkIfExists);
-      exists.forEach(assert);
-    }));
-  });
-});
+    it('handles updates', async() => {
+      const content = await readFile('tmp/index.js')
+      await timeout(2000)
+      await writeFile('test/fixtures/lib/index.js', 'module.exports = "";')
+      await timeout(2000)
+      bufferEqual(content, await readFile('tmp/index.js')).should.be.false()
+    })
 
-function hasJsFile(log) {
-  return log === 'index.js';
-}
-
-function hasLibFile(log) {
-  return log.includes(path.join('lib', 'index.js'));
-}
-
-function hasPaths(log) {
-  return log.includes(path.join('test', 'src', 'js')) && log.includes('tmp');
-}
-
-function identity(x) {
-  return x;
-}
-
-function checkIfExists(url) {
-  return fs.exists(url.replace(protocol, '').split('/').join(path.sep));
-}
+    it('handles source maps in development', async() => {
+      const content = await readFile('tmp/index.js'),
+            paths = convert
+              .fromSource(content.toString())
+              .getProperty('sources')
+              .sort()
+              .filter(x => x)
+              .map(x => x.replace(protocol, '').split('/').join(sep))
+      paths.should.have.length(5)
+      paths.should.eql([
+        resolve('node_modules/browserify/node_modules/browser-pack/_prelude.js'),
+        resolve('node_modules/lodash/internal/isObjectLike.js'),
+        resolve('node_modules/lodash/lang/isNumber.js'),
+        resolve('test/fixtures/index.js'),
+        resolve('test/fixtures/lib/index.js'),
+      ])
+    })
+  })
+})
