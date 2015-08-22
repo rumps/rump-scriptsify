@@ -1,17 +1,33 @@
 # Rump Scriptsify
 [![NPM](http://img.shields.io/npm/v/rump-scriptsify.svg?style=flat-square)](https://www.npmjs.org/package/rump-scriptsify)
 ![License](http://img.shields.io/npm/l/rump-scriptsify.svg?style=flat-square)
-[![Travis](http://img.shields.io/travis/rumps/rump-scriptsify.svg?style=flat-square&label=travis)](https://travis-ci.org/rumps/rump-scriptsify)
+[![Issues](https://img.shields.io/github/issues/rumps/issues.svg?style=flat-square)](https://github.com/rumps/issues/issues)
+
+
+## Status
+
+### Master
+[![Dependencies](http://img.shields.io/david/rumps/scriptsify.svg?style=flat-square)](https://david-dm.org/rumps/scriptsify)
+[![Dev Dependencies](http://img.shields.io/david/dev/rumps/scriptsify.svg?style=flat-square)](https://david-dm.org/rumps/scriptsify#info=devDependencies)
+<br>
+[![Travis](http://img.shields.io/travis/rumps/scriptsify.svg?style=flat-square&label=travis)](https://travis-ci.org/rumps/scriptsify)
 [![Appveyor](http://img.shields.io/appveyor/ci/jupl/rump-scriptsify.svg?style=flat-square&label=appveyor)](https://ci.appveyor.com/project/jupl/rump-scriptsify)
-[![Dependencies](http://img.shields.io/david/rumps/rump-scriptsify.svg?style=flat-square)](https://david-dm.org/rumps/rump-scriptsify)
-[![Dev Dependencies](http://img.shields.io/david/dev/rumps/rump-scriptsify.svg?style=flat-square)](https://david-dm.org/rumps/rump-scriptsify#info=devDependencies)
+[![Codecov](http://img.shields.io/codecov/c/github/rumps/scriptsify.svg?style=flat-square&label=codecov)](https://codecov.io/github/rumps/scriptsify?view=all)
+
+### Develop
+[![Dependencies](http://img.shields.io/david/rumps/scriptsify/develop.svg?style=flat-square)](https://david-dm.org/rumps/scriptsify/develop)
+[![Dev Dependencies](http://img.shields.io/david/dev/rumps/scriptsify/develop.svg?style=flat-square)](https://david-dm.org/rumps/scriptsify/develop#info=devDependencies)
+<br>
+[![Travis](http://img.shields.io/travis/rumps/scriptsify/develop.svg?style=flat-square&label=travis)](https://travis-ci.org/rumps/scriptsify)
+[![Appveyor](http://img.shields.io/appveyor/ci/jupl/rump-scriptsify/develop.svg?style=flat-square&label=appveyor)](https://ci.appveyor.com/project/jupl/rump-scriptsify)
+[![Codecov](http://img.shields.io/codecov/c/github/rumps/scriptsify/develop.svg?style=flat-square&label=codecov)](https://codecov.io/github/rumps/scriptsify?branch=develop&view=all)
 
 
 ## About
 Rump Scriptsify is a Rump module for handling and building scripts with
 [Browserify](https://browserify.org/)/Watchify, offering a lot of flexibility
 and configuration to author your scripts. For more information, visit the
-[Rump repository](https://github.com/rumps/rump).
+[core repository](https://github.com/rumps/core).
 
 
 ## API
@@ -92,6 +108,6 @@ generated based on defaults and overrides.
 ## Plugins/Transforms
 The following plugins/transforms are used by default for builds:
 - [`bundle-collapser`](https://github.com/substack/bundle-collapser) is used
-  in non-watch production builds to reduce the size of builds.
+in non-watch production builds to reduce the size of builds.
 - [`unreachable-branch-transform`](https://github.com/zertosh/unreachable-branch-transform)
-  is used in production builds to remove dead code.
+is used in production builds to remove dead code.

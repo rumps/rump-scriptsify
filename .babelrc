@@ -1,3 +1,5 @@
 {
-  "whitelist": ["regenerator"]
+  "only": ["src", "test"],
+  "optional": ["runtime"],
+  "stage": 0
 }
