@@ -1,6 +1,6 @@
 {
   "name": "rump-scriptsify",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "author": "Juan Placencia",
   "description": "Rump piece for building JS with Browserify",
   "license": "MIT",
@@ -23,6 +23,7 @@
     "test": "mocha"
   },
   "dependencies": {
+    "babel-runtime": "^5.8.20",
     "browserify": "^10.2.6",
     "bundle-collapser": "^1.2.1",
     "convert-source-map": "^1.1.1",
@@ -40,6 +41,7 @@
   "devDependencies": {
     "babel": "^5.8.19",
     "babel-eslint": "^4.0.5",
+    "bluebird": "^2.9.34",
     "buffer-equal": "^0.0.1",
     "codecov.io": "^0.1.5",
     "eslint": "^1.0.0",
@@ -49,7 +51,7 @@
     "lodash": "^3.10.1",
     "mocha": "^2.2.5",
     "mz": "^2.0.0",
-    "rump": "^0.7.6",
+    "rump": "^0.8.0",
     "should": "^7.0.2",
     "should-sinon": "0.0.3",
     "sinon": "^1.15.4",

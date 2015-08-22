@@ -43,7 +43,7 @@ describe('tasks', function() {
     console.log = log
     logs.slice(-6).should.eql([
       '',
-      '--- Scripts v0.7.0',
+      '--- Scripts v0.8.0',
       `Processed scripts from test${sep}fixtures are copied with source maps to tmp`,
       'Affected files:',
       'index.js',
@@ -55,7 +55,7 @@ describe('tasks', function() {
     console.log = log
     logs.slice(-6).should.eql([
       '',
-      '--- Scripts v0.7.0',
+      '--- Scripts v0.8.0',
       `Processed scripts from test${sep}fixtures are minified and copied to tmp`,
       'Affected files:',
       'index.js',
