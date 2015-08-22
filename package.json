@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "babel-runtime": "^5.8.20",
-    "browserify": "^10.2.6",
+    "browserify": "^11.0.1",
     "bundle-collapser": "^1.2.1",
     "convert-source-map": "^1.1.1",
     "event-stream": "^3.3.1",
